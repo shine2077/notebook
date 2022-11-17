@@ -2,19 +2,19 @@
 
 ** most import **
 exception-safe
-æŠ›å‡ºå¼‚å¸¸ä¸åº”è¯¥è®©ç¨‹åºå¤„äºæœªå®šä¹‰çŠ¶æ€
-Effective C++ æ¡æ¬¾29
+Å×³öÒì³£²»Ó¦¸ÃÈÃ³ÌĞò´¦ÓÚÎ´¶¨Òå×´Ì¬
+Effective C++ Ìõ¿î29
 
 ## How to implement and use swap ##
  ### Implementing swap ###
- å£°æ˜æˆå‘˜å‡½æ•°swap()
+ ÉùÃ÷³ÉÔ±º¯Êıswap()
  ```c++
  class C {
     public:
     void swap(C& rhs) noexcept;
 };
  ```
- å®šä¹‰
+ ¶¨Òå
  1.simply
 ```c++
 #include <utility> // <algorithm> before C++11

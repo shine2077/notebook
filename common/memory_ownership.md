@@ -4,17 +4,17 @@
 
 ## Expressing non-ownership
 
-非所有权
-该对象在其他地方被实现，稍后将再其他地方被删除，访问该对象的程序不负责其的管理。
+������Ȩ
+�ö����������ط���ʵ�֣��Ժ��������ط���ɾ�������ʸö���ĳ��򲻸�����Ĺ�����
 
-使用原始指针或者引用来访问非所有对象。
+ʹ��ԭʼָ��������������ʷ�����Ȩ����
 
 ## Expressing exclusive ownership
-独占所有权
-程序创建一个对象，稍后由该程序负责删除。
+��ռ����Ȩ
+���򴴽�һ�������Ժ��ɸó�����ɾ����
 
-** 方式一 ** 
-局部（栈）变量
+** ��ʽһ ** 
+�ֲ���ջ������
 ```c++
 void Work() {
     Widget w;
@@ -23,30 +23,29 @@ void Work() {
 }
 ```
 
-** 方式二 **
-主要用于无法在栈上创建对象，必须在堆上创建对象。
+** ��ʽ�� **
+��Ҫ�����޷���ջ�ϴ������󣬱����ڶ��ϴ�������
 
-栈分配的对象将在离开作用域后被删除。如果我们需要让对象存活更长时间，它必须分配到堆上。
+ջ����Ķ������뿪�������ɾ�������������Ҫ�ö��������ʱ�䣬��������䵽���ϡ�
 
-在堆上创建对象的另一个原因是编译时可能不知道对象的大小或类型。这通常发生在对象是多态的——创建了派生对象，但使用了基类指针。
+�ڶ��ϴ����������һ��ԭ���Ǳ���ʱ���ܲ�֪������Ĵ�С�����͡���ͨ�������ڶ����Ƕ�̬�ġ����������������󣬵�ʹ���˻���ָ�롣
 
 ```c++
 class FancyWidget : public Widget { ... };
 std::unique_ptr<Widget> w(new FancyWidget);
-}
 ```
 
-## Expressing transfer of exclusive ownership
-它不能被复制到另一个 unique_ptr，不能通过值传递给函数，也不能用于任何需要复制的 C++ 标准库算法。 只能移动 unique_ptr。 这意味着，内存资源所有权将转移到另一 unique_ptr，并且原始 unique_ptr 不再拥有此资源。
+### Expressing transfer of exclusive ownership
+�����ܱ����Ƶ���һ�� unique_ptr������ͨ��ֵ���ݸ�������Ҳ���������κ���Ҫ���Ƶ� C++ ��׼���㷨�� ֻ���ƶ� unique_ptr�� ����ζ�ţ��ڴ���Դ����Ȩ��ת�Ƶ���һ unique_ptr������ԭʼ unique_ptr ����ӵ�д���Դ��
 
 ## Expressing shared ownership
-共享所有权
+��������Ȩ
 
-经常被过度使用
-自动删除不需要共享所有权，只需一个明确表达（unique 指针、数据成员和容器都提供自动删除）
+����������ʹ��
+�Զ�ɾ������Ҫ��������Ȩ��ֻ��һ����ȷ���unique ָ�롢���ݳ�Ա���������ṩ�Զ�ɾ����
 
-缺点
-shared_ptr的循环依赖问题
+ȱ��
+shared_ptr��ѭ����������
 ```c++
 #include <iostream>
 #include <memory> // for std::shared_ptr
@@ -92,14 +91,14 @@ int main()
  return 0;
 }
 ```
-两个对象互相引用，导致析构函数无法执行
+�������������ã��������������޷�ִ��
 ```c++
 output:
 Lucy created
 Ricky created
 Lucy is now partnered with Ricky
 ```
-使用weak_ptr解决循环依赖问题
+ʹ��weak_ptr���ѭ����������
 ```c++
 #include <iostream>
 #include <memory> // for std::shared_ptr and std::weak_ptr
@@ -145,7 +144,7 @@ int main()
  return 0;
 }
 ```
-weak_ptr不增加shared_ptr的引用计数
+weak_ptr������shared_ptr�����ü���
 ```c++
 Lucy created
 Ricky created
