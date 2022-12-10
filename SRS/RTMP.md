@@ -1,14 +1,14 @@
 # RTMP
 
-## Ñ°ÕÒRTMPÁ¬½ÓÈë¿Ú
+## å¯»æ‰¾RTMPè¿æ¥å…¥å£
 
 ![srs1](srs-1.png "srs-1")
 
-°Ñ `Srs`£¬`Srt`£¬`Rtc` ·şÎñ×¢²áµ½`_srs_hybrid`¡£ÆäÊµ¾ÍÊÇ°ÑÉÏÊö·şÎñÆ÷Ìí¼Óµ½Ò»¸ö `std::vector<ISrsHybridServer*> servers`
+æŠŠ `Srs`ï¼Œ`Srt`ï¼Œ`Rtc` æœåŠ¡æ³¨å†Œåˆ°`_srs_hybrid`ã€‚å…¶å®å°±æ˜¯æŠŠä¸Šè¿°æœåŠ¡å™¨æ·»åŠ åˆ°ä¸€ä¸ª `std::vector<ISrsHybridServer*> servers`
 
-`_srs_hybrid->run()` »á¿ªÆôĞ­³Ì£¬È»ºóÒ»Ö±×èÈû
+`_srs_hybrid->run()` ä¼šå¼€å¯åç¨‹ï¼Œç„¶åä¸€ç›´é˜»å¡
 
-·ÖÎö `_srs_hybrid->run()` º¯Êı
+åˆ†æ `_srs_hybrid->run()` å‡½æ•°
 
 ```c++
 srs_error_t SrsHybridServer::run()
@@ -21,7 +21,7 @@ srs_error_t SrsHybridServer::run()
     vector<ISrsHybridServer*>::iterator it;
     for (it = servers.begin(); it != servers.end(); ++it) {
         ISrsHybridServer* server = *it;
-        //ÒÀ´ÎÆô¶¯ÒÀ´ÎÆô¶¯Srs£¬Srt£¬Rtc·şÎñ
+        //ä¾æ¬¡å¯åŠ¨ä¾æ¬¡å¯åŠ¨Srsï¼ŒSrtï¼ŒRtcæœåŠ¡
         if ((err = server->run(&wg)) != srs_success) {
             return srs_error_wrap(err, "run server");
         }
@@ -34,11 +34,11 @@ srs_error_t SrsHybridServer::run()
 }
 ```
 
-ÕâÀïÏÈÖ»¹Ø×¢`RTMP`·şÎñÏà¹ØµÄ`Srs`·şÎñµÄÆô¶¯,¼´`SrsServerAdapter`Àà£¬¸ÃÀàµÄUMLÍ¼ÈçÏÂ
+è¿™é‡Œå…ˆåªå…³æ³¨`RTMP`æœåŠ¡ç›¸å…³çš„`Srs`æœåŠ¡çš„å¯åŠ¨,å³`SrsServerAdapter`ç±»ï¼Œè¯¥ç±»çš„UMLå›¾å¦‚ä¸‹
 
 ![srs2](srs-2.png "srs-2")
 
-`SrsServerAdapter` µÄ `run` º¯ÊıÊµÏÖÈçÏÂ£º
+`SrsServerAdapter` çš„ `run` å‡½æ•°å®ç°å¦‚ä¸‹ï¼š
 
 ```c++
 srs_error_t SrsServerAdapter::run(SrsWaitGroup* wg)
@@ -57,7 +57,7 @@ srs_error_t SrsServerAdapter::run(SrsWaitGroup* wg)
     if ((err = srs->initialize_signal()) != srs_success) {
         return srs_error_wrap(err, "initialize signal");
     }
-    //¿ªÊ¼¼àÌı¶Ë¿ÚÁË£¬listen fd »á±£´æÔÚ¶ÔÏóÀïÃæ£¬Ò»¸öĞ­³Ì¼àÌıÒ»¸ölisten fd
+    //å¼€å§‹ç›‘å¬ç«¯å£äº†ï¼Œlisten fd ä¼šä¿å­˜åœ¨å¯¹è±¡é‡Œé¢ï¼Œä¸€ä¸ªåç¨‹ç›‘å¬ä¸€ä¸ªlisten fd
     if ((err = srs->listen()) != srs_success) {
         return srs_error_wrap(err, "listen");
     }
@@ -73,18 +73,18 @@ srs_error_t SrsServerAdapter::run(SrsWaitGroup* wg)
     if ((err = srs->ingest()) != srs_success) {
         return srs_error_wrap(err, "ingest");
     }
-    //Æô¶¯Srs·şÎñ
+    //å¯åŠ¨SrsæœåŠ¡
     if ((err = srs->start(wg)) != srs_success) {
         return srs_error_wrap(err, "start");
     }
     //
-    //Ê¡ÂÔÖĞ¼äµÄ´úÂë
+    //çœç•¥ä¸­é—´çš„ä»£ç 
     //
     return err;
 }
 ```
 
-`srs->listen()`£¬¿ªÊ¼¼àÌı¶Ë¿Ú£¬´úÂëÈçÏÂ£º
+`srs->listen()`ï¼Œå¼€å§‹ç›‘å¬ç«¯å£ï¼Œä»£ç å¦‚ä¸‹ï¼š
 
 ```c++
 srs_error_t SrsServer::listen()
@@ -92,14 +92,14 @@ srs_error_t SrsServer::listen()
     srs_error_t err = srs_success;
 
     // Create RTMP listeners.
-    //¶ÁÈ¡ÅäÖÃÎÄ¼şÖĞrtmp·şÎñµÄipºÍ¶Ë¿ÚºÅ£¬²¢Ìí¼Óµ½¼àÌıÁĞvector<SrsTcpListener*>
+    //è¯»å–é…ç½®æ–‡ä»¶ä¸­rtmpæœåŠ¡çš„ipå’Œç«¯å£å·ï¼Œå¹¶æ·»åŠ åˆ°ç›‘å¬åˆ—vector<SrsTcpListener*>
     rtmp_listener_->add(_srs_config->get_listens())->set_label("RTMP");
-    //¼àÌıÁĞ±íÖĞ·ÖipºÍ¶Ë¿Ú
+    //ç›‘å¬åˆ—è¡¨ä¸­åˆ†ipå’Œç«¯å£
     if ((err = rtmp_listener_->listen()) != srs_success) {
         return srs_error_wrap(err, "rtmp listen");
     }
     //
-    //Ê¡ÂÔÖĞ¼äÆäËûĞ­Òé·şÎñÆ÷µÄ¼àÌıÆ÷µÄ´úÂëÖ»¿´RTMPĞ­ÒéµÄ
+    //çœç•¥ä¸­é—´å…¶ä»–åè®®æœåŠ¡å™¨çš„ç›‘å¬å™¨çš„ä»£ç åªçœ‹RTMPåè®®çš„
     //
 
     if ((err = conn_manager->start()) != srs_success) {
@@ -110,13 +110,13 @@ srs_error_t SrsServer::listen()
 }
 ```
 
-·ÖÎö`rtmp_listener_->listen()`µÄ´úÂë£º
+åˆ†æ`rtmp_listener_->listen()`çš„ä»£ç ï¼š
 
 ```c++
 srs_error_t SrsMultipleTcpListeners::listen()
 {
     srs_error_t err = srs_success;
-    //±éÀú¼àÌıÁĞ±í£¬ÒÀ´Î¿ªÊ¼¼àÌı
+    //éå†ç›‘å¬åˆ—è¡¨ï¼Œä¾æ¬¡å¼€å§‹ç›‘å¬
     for (vector<SrsTcpListener*>::iterator it = listeners_.begin(); it != listeners_.end(); ++it) {
         SrsTcpListener* l = *it;
 
@@ -129,7 +129,7 @@ srs_error_t SrsMultipleTcpListeners::listen()
 }
 ```
 
-`l->listen()`µ÷ÓÃº¯Êı`SrsTcpListener::listen()`£¬´úÂëÈçÏÂ
+`l->listen()`è°ƒç”¨å‡½æ•°`SrsTcpListener::listen()`ï¼Œä»£ç å¦‚ä¸‹
 
 ```c++
 srs_error_t SrsTcpListener::listen()
@@ -145,7 +145,7 @@ srs_error_t SrsTcpListener::listen()
     }
     
     srs_freep(trd);
-    //´´½¨Ğ­³Ì
+    //åˆ›å»ºåç¨‹
     trd = new SrsSTCoroutine("tcp", this);
     if ((err = trd->start()) != srs_success) {
         return srs_error_wrap(err, "start coroutine");
@@ -158,22 +158,22 @@ srs_error_t SrsTcpListener::listen()
 }
 ```
 
-Õâ¸öº¯ÊıµÄµ÷ÓÃÁ´ÈçÍ¼
+è¿™ä¸ªå‡½æ•°çš„è°ƒç”¨é“¾å¦‚å›¾
 
 ![srs3](srs-3.png "srs-3")
 
-º¯ÊıÖ´ĞĞÍêÖ®ºó£¬ÄÃµ½ÁË¼àÌıµÄÎÄ¼şÃèÊö·ûlfdºó¿ªÊ¼´´½¨Ğ­³Ì
+å‡½æ•°æ‰§è¡Œå®Œä¹‹åï¼Œæ‹¿åˆ°äº†ç›‘å¬çš„æ–‡ä»¶æè¿°ç¬¦lfdåå¼€å§‹åˆ›å»ºåç¨‹
 
-`trd->start()`µ÷ÓÃ SrsFastCoroutine::start() ´´½¨Ò»¸öĞ­³Ì¡£
+`trd->start()`è°ƒç”¨ SrsFastCoroutine::start() åˆ›å»ºä¸€ä¸ªåç¨‹ã€‚
 
 ```c++
 srs_error_t SrsFastCoroutine::start()
 {
     srs_error_t err = srs_success;
     
-    //ºöÂÔ
+    //å¿½ç•¥
 
-    //´´½¨Ğ­³Ì
+    //åˆ›å»ºåç¨‹
     if ((trd = (srs_thread_t)_pfn_st_thread_create(pfn, this, 1, stack_size)) == NULL) {
         err = srs_error_new(ERROR_ST_CREATE_CYCLE_THREAD, "create failed");
         
@@ -189,7 +189,7 @@ srs_error_t SrsFastCoroutine::start()
 }
 ```
 
-`_pfn_st_thread_create()` ´«µİµÄÊÇ pfn£¬ ËùÒÔĞ­³ÌÊµ¼Êµ÷ÓÃµÄº¯ÊıÊÇ `SrsFastCoroutine::pfn(void* arg)`
+`_pfn_st_thread_create()` ä¼ é€’çš„æ˜¯ pfnï¼Œ æ‰€ä»¥åç¨‹å®é™…è°ƒç”¨çš„å‡½æ•°æ˜¯ `SrsFastCoroutine::pfn(void* arg)`
 
 ```c++
 void* SrsFastCoroutine::pfn(void* arg)
@@ -210,7 +210,7 @@ void* SrsFastCoroutine::pfn(void* arg)
 }
 ```
 
-`pfn()` Êµ¼ÊÉÏÊÇÓÖÊÇµ÷ÁË`SrsFastCoroutine`¶ÔÏóµÄ `cycle()` À´Ñ­»·´¦ÀíÒµÎñ
+`pfn()` å®é™…ä¸Šæ˜¯åˆæ˜¯è°ƒäº†`SrsFastCoroutine`å¯¹è±¡çš„ `cycle()` æ¥å¾ªç¯å¤„ç†ä¸šåŠ¡
 
 ```c++
 srs_error_t SrsFastCoroutine::cycle()
@@ -234,7 +234,7 @@ srs_error_t SrsFastCoroutine::cycle()
 }
 ```
 
-Êµ¼ÊÓÖÊÇµ÷ÓÃ`handler->cycle()`£¬ÆäÖĞ`handler`Îª`ISrsCoroutineHandler`Àà£¬`SrsTcpListener`ÊÇÆäÅÉÉúÀà£¬Êµ¼Ê¾ÍÊÇµ÷ÓÃ`SrsTcpListener::cycle()`
+å®é™…åˆæ˜¯è°ƒç”¨`handler->cycle()`ï¼Œå…¶ä¸­`handler`ä¸º`ISrsCoroutineHandler`ç±»ï¼Œ`SrsTcpListener`æ˜¯å…¶æ´¾ç”Ÿç±»ï¼Œå®é™…å°±æ˜¯è°ƒç”¨`SrsTcpListener::cycle()`
 
 ```c++
 srs_error_t SrsTcpListener::cycle()
@@ -251,7 +251,7 @@ srs_error_t SrsTcpListener::cycle()
             return srs_error_new(ERROR_SOCKET_ACCEPT, "accept at fd=%d", srs_netfd_fileno(lfd));
         }
         
-        //Ê¡ÂÔÖĞ¼ä´úÂë
+        //çœç•¥ä¸­é—´ä»£ç 
         
         if ((err = handler->on_tcp_client(this, fd)) != srs_success) {
             return srs_error_wrap(err, "handle fd=%d", srs_netfd_fileno(fd));
@@ -261,7 +261,7 @@ srs_error_t SrsTcpListener::cycle()
     return err;
 }
 ```
- rtmp Á¬½ÓµÄ´¦ÀíÈë¿Ú£¬¾ÍÊÇ new SrsRtmpConn()£¬Æäµ÷ÓÃÁ´ÈçÏÂÍ¼
+ rtmp è¿æ¥çš„å¤„ç†å…¥å£ï¼Œå°±æ˜¯ new SrsRtmpConn()ï¼Œå…¶è°ƒç”¨é“¾å¦‚ä¸‹å›¾
 
 ![srs4](srs-4.png "srs-4")
 
@@ -270,7 +270,7 @@ srs_error_t SrsServer::do_on_tcp_client(ISrsListener* listener, srs_netfd_t& stf
 {
     srs_error_t err = srs_success;
 
-    //Ê¡ÂÔ
+    //çœç•¥
 
     // Create resource by normal listeners.
     if (!resource) {
@@ -278,7 +278,7 @@ srs_error_t SrsServer::do_on_tcp_client(ISrsListener* listener, srs_netfd_t& stf
             resource = new SrsRtmpConn(this, stfd2, ip, port);
         } 
 
-    //Ê¡ÂÔ
+    //çœç•¥
 
     }
 
@@ -295,7 +295,7 @@ srs_error_t SrsServer::do_on_tcp_client(ISrsListener* listener, srs_netfd_t& stf
 }
 ```
 
-## ½¨Á¢RTMPÁ¬½Ó
+## å»ºç«‹RTMPè¿æ¥
 
 ```c++
 SrsRtmpConn::SrsRtmpConn(SrsServer* svr, srs_netfd_t c, string cip, int cport)
@@ -341,11 +341,11 @@ SrsRtmpConn::SrsRtmpConn(SrsServer* svr, srs_netfd_t c, string cip, int cport)
 }
 ```
 
-µÚ¶ş¸ö²ÎÊı`srs_netfd_t c` £¬ÊÇ¶ÔÔ­Ê¼ `tcp fd`µÄ·â×°£¬`skt = new SrsTcpConnection(c)`´´½¨Ò»¸öTcpÁ¬½Ó¹ÜÀíÆ÷`skt`£¬·½±ãºóÃæ¶ÔÕâ¸ö`tcp fd`½øĞĞ¶ÁĞ´
+ç¬¬äºŒä¸ªå‚æ•°`srs_netfd_t c` ï¼Œæ˜¯å¯¹åŸå§‹ `tcp fd`çš„å°è£…ï¼Œ`skt = new SrsTcpConnection(c)`åˆ›å»ºä¸€ä¸ªTcpè¿æ¥ç®¡ç†å™¨`skt`ï¼Œæ–¹ä¾¿åé¢å¯¹è¿™ä¸ª`tcp fd`è¿›è¡Œè¯»å†™
 
-`new SrsSTCoroutine("rtmp", this, _srs_context->get_id())`´´½¨ÁËÒ»¸öĞ­³ÌÀ´´¦ÀíÕâ¸ö¿Í»§¶ËµÄRTMPÁ¬½Ó£»¸ÃĞ­³ÌÍ¨¹ıµ÷ÓÃº¯Êı`SrsRtmpConn::cycle()`À´Ñ­»·´¦Àí`rtmp = new SrsRtmpServer(skt)`ÔÚTCP»ù´¡ÉÏ´´½¨µÄRTMPÁ¬½Ó
+`new SrsSTCoroutine("rtmp", this, _srs_context->get_id())`åˆ›å»ºäº†ä¸€ä¸ªåç¨‹æ¥å¤„ç†è¿™ä¸ªå®¢æˆ·ç«¯çš„RTMPè¿æ¥ï¼›è¯¥åç¨‹é€šè¿‡è°ƒç”¨å‡½æ•°`SrsRtmpConn::cycle()`æ¥å¾ªç¯å¤„ç†`rtmp = new SrsRtmpServer(skt)`åœ¨TCPåŸºç¡€ä¸Šåˆ›å»ºçš„RTMPè¿æ¥
 
-## ´¦ÀíRTMPÁ¬½Ó
+## å¤„ç†RTMPè¿æ¥
 
 ![srs6](srs-6.png "srs-6")
 
