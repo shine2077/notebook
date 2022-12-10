@@ -1,20 +1,20 @@
 # paho.mqtt.cpp交叉编译
 
-首先编译paho.mqtt.c
+交叉编译paho.mqtt.c
 >cd paho.mqtt.c \
 >mkdir build_arm \
 >cd build_arm \
 >cmake ..  -DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc  \
 -DCMAKE_INSTALL_PREFIX=./install  \
 -DPAHO_WITH_SSL=TRUE  \
--DOPENSSL_SSL_LIBRARY=/home/rising/repo/openssl_1.0.0_arm/lib/libssl.so 	\
--DOPENSSL_INCLUDE_DIR=/home/rising/repo/openssl_1.0.0_arm/include 	\
+-DOPENSSL_SSL_LIBRARY=/home/rising/repo/openssl_1.0.0_arm/lib/libssl.so \
+-DOPENSSL_INCLUDE_DIR=/home/rising/repo/openssl_1.0.0_arm/include \
 -DOPENSSL_CRYPTO_LIBRARY=/home/rising/repo/openssl_1.0.0_arm/lib/libcrypto.so \
 -DCMAKE_BUILD_TYPE=Debug \
 >#make \
->#make install 
+>#make install
 
-再编译paho.mqtt.cpp
+交叉编译paho.mqtt.cpp
 >cd paho.mqtt.cpp \
 >mkdir build_arm \
 >cd build_arm \
@@ -28,6 +28,3 @@
 -DCMAKE_BUILD_TYPE=Debug \
 >make \
 >make install
-
-
-
