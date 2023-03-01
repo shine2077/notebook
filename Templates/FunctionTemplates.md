@@ -182,5 +182,97 @@ std::common_type_t<T1,T2> max (T1 a, T2 b)
 
 # 4. 默认模板参数
 
+- 将推导返回类型作为默认模板参数
+```c++
+#include <type_traits>
+template<typename T1, typename T2,
+         typename RT = std::decay_t<decltype(true ? T1() : T2())>>
+RT max (T1 a, T2 b)
+{
+  return b < a ? a : b;
+}
+```
+`std::decay_t<>` 确保没有返回引用类型，在C++11  `typename std::decay<…>::type `代替`std::decay_t<…>`
+
+```c++
+#include <type_traits>
+
+template<typename T1, typename T2,
+         typename RT = std::common_type_t<T1,T2>>
+RT max (T1 a, T2 b)
+{
+  return b < a ? a : b;
+}
+```
+`std::common_type<>` 确保没有返回引用类型。
+```c++
+auto a = ::max(4, 7.2);  //use the default value for the return type
+auto b = ::max<double,int,long double>(7.2, 4); // returns long double as explicitly requested
+```
+
+- 同样可以显示的定义返回类型作为默认模板参数
+```c++
+template<typename RT = long, typename T1, typename T2>
+RT max (T1 a, T2 b)
+{
+  return b < a ? a : b;
+}
+...
+int i; long l;
+...
+max(i, l);              // returns long (default argument of template parameter for return type)
+max<int>(4, 42);        // returns int as explicitly requested
+```
 
 # 5. 重载函数模板
+
+函数（函数模板）名字相同，但参数数量或参数类型不同。编译器会根据调用时给出的具体实参，选择一个编译器认为 *最合适* 的函数模板实例化和调用。
+
+- 函数模板与非模板函数的匹配
+```c++
+// maximum of two int values:
+int max (int a, int b)
+{
+  return b < a ? a : b;
+}
+// maximum of two values of any type:
+template<typename T>
+T max (T a, T b)
+{
+  return b < a ? a : b;
+}
+
+int main()
+{
+  ::max(7, 42);            // calls the nontemplate for two ints 
+  ::max(7.0, 42.0);        // calls max<double> (by argument deduction)
+  ::max(’a’, ’b’);         // calls max<char> (by argument deduction) 
+  ::max<>(7, 42);          // calls max<int> (by argument deduction) 
+  ::max<double>(7, 42);    // calls max<double> (no argument deduction)
+  ::max(’a’, 42.7);        // calls the nontemplate for two ints
+}
+```
+`<>`这个空模板参数列表的用处是可以明确地指出调用函数模板，而不是非模板函数。
+```c++
+::max<>(7, 42);        // calls max<int> (by argument deduction)
+```
+- 函数模板的匹配
+  
+需要确保调用函数时只有一个函数模板被匹配。
+```c++
+template<typename T1, typename T2>
+auto max (T1 a, T2 b)
+{
+  return b < a ? a : b;
+}
+template<typename RT, typename T1, typename T2>
+RT max (T1 a, T2 b)
+{
+  return b < a ? a : b;
+}
+
+auto a = ::max(4, 7.2);                     // uses first template
+auto b = ::max<long double>(7.2, 4);        // uses second template
+
+auto c = ::max<int>(4, 7.2);                // ERROR: both function templates match
+```
