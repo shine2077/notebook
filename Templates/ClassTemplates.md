@@ -384,6 +384,9 @@ Stack(char const*) -> Stack<std::string>;
 ```
 ```c++
 Stack stringStack{"bottom"};        // OK: Stack<std::string> deduced since C++17
+```
+指引编译器将`Stack<char const[7]>`推导为`Stack<std::string>`。
+```c++
 Stack stringStack = "bottom";       // Stack<std::string> deduced, but still not valid
 ```
 定义了推导指南，推导完成但无法完成实例化，编译器报错不存在从const char[7]转换到`Stack<std::string>`的适当构造函数
