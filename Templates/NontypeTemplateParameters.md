@@ -103,4 +103,4 @@ int main()
   Message<s21> m21; //ERROR
 }
 ```
-最后一条语句报错的原因是`s21`不是[编译期常量]()
+最后一条语句报错的原因是`s21`不是 [编译期常量](https://www.learncpp.com/cpp-tutorial/compile-time-constants-constant-expressions-and-constexpr/) 。
