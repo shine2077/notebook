@@ -16,21 +16,26 @@ void print (T firstArg, Types... args)
   print(args...);                 // call print() for remaining arguments
 }
 ```
+
 ```c++
 std::string s("world");
 print (7.5, "hello", s);
 ```
+
 `Types` 称为模板参数包
 
 `args` 称为函数参数包
 
 输出
-```
+
+```c++
 7.5
 hello
 world
 ```
+
 通过递归调用`print`函数，最后调用`print`的非模板重载
+
 ```c++
 print<double, char const*, std::string> (7.5, "hello", s)
 =================================1=============================
@@ -45,7 +50,9 @@ print<double, char const*, std::string> (7.5, "hello", s)
 ```
 
 ## 重载可变和非可变参数模板
+
 上面的例子可以改写如下
+
 ```c++
 #include <iostream>
  
@@ -74,6 +81,7 @@ void print (T firstArg, Types… args)
   …
 }
 ```
+
 ```c++
 template<typename T, typename... Types>
 void print (T firstArg, Types... args)
@@ -86,19 +94,23 @@ void print (T firstArg, Types... args)
 ```
 
 ## 折叠表达式(C++17)
+
 ```c++
 template<typename... T>
 auto foldSum (T... s) {
   return (... + s);   // ((s1 + s2) + s3) …
 }
 ```
+
 折叠规则
+
 - `( ... op pack )` -> `( ( ( pack1 op pack2 ) op pack3 ) ... op packN  )`
 - `( pack op ... )` -> `( pack1 op ( ... ( packN-1 op packN ) ) )`
 - `( init op ... op pack )` -> `( ( ( init op pack1 ) op pack2 ) ... op packN )`
 - `( pack op ... op init )` -> `( pack1 op ( ... ( packN op init ) )  )`
 
 使用折叠表达式反转链表
+
 ```c++
 // define binary tree structure and traverse helpers:
 struct Node {
@@ -132,11 +144,13 @@ int main()
 ```
 
 只有一下三种运算符允许参数包为空
+
 - `&&` 结果为 `true`
 - `||` 结果为 `false`
 - `,`  结果为 `void()`
 
 使用折叠表达式改写`print`
+
 ```c++
 template<typename T>
 class AddSpace
@@ -154,23 +168,26 @@ public:
 template<typename... Types>
 void print(Types const&... args)
 {
-	(std::cout << ... << AddSpace(args) ) << std::endl;
+  (std::cout << ... << AddSpace(args) ) << std::endl;
 }
 
 int main()
 {
-	std::string s("world");
-	print(7.5, "hello", s);
+  std::string s("world");
+  print(7.5, "hello", s);
 }
 ```
+
 输出
-```
+
+```c++
 7.5 hello world
 ```
 
 ## 可变参表达式
 
 定义函数`printDoubled (T const&... args)`
+
 ```c++
 template<typename... T>
 void printDoubled (T const&... args)
@@ -178,7 +195,9 @@ void printDoubled (T const&... args)
   print (args + args...);
 }
 ```
+
 一下两段代码作用一样
+
 ```c++
 printDoubled(7.5, std::string("hello"), std::complex<float>(4,2));
 
@@ -186,9 +205,11 @@ print(7.5 + 7.5,
       std::string("hello") + std::string("hello"),
       std::complex<float>(4,2) + std::complex<float>(4,2) );
 ```
+
 可变表达式可以对参数包中所有参数进行运算。
 
 需要注意，省略号中的点不能直接跟在数字字面后面。
+
 ```c++
 template<typename... T>
 void addOne (T const&... args)
@@ -199,7 +220,8 @@ void addOne (T const&... args)
 }
 ```
 
-编译时表达式可以用同样的方式处理模板参数包 
+编译时表达式可以用同样的方式处理模板参数包
+
 ```c++
 template<typename T1, typename… TN>
 constexpr bool isHomogeneous (T1, TN...)
@@ -209,11 +231,15 @@ constexpr bool isHomogeneous (T1, TN...)
 
 isHomogeneous(43, -1, "hello")
 ```
+
 输出
-```
+
+```c++
 false
 ```
+
 可变索引
+
 ```c++
 template<typename C, typename... Idx>
 void printElems (C const& coll, Idx... idx)
@@ -227,6 +253,7 @@ void printIdx (C const& coll)
   print(coll[Idx]...);
 }
 ```
+
 ```c++
 std::vector<std::string> coll = {"good", "times", "say", "bye"}; 
 //等效
@@ -236,6 +263,7 @@ printIdx<2,0,3>(coll);
 ```
 
 ## 可变参类模板
+
 ```c++
 #include <string>
  
