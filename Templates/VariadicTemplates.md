@@ -310,3 +310,35 @@ int main()
     std::cout << op(c2) << std::endl;
 }
 ```
+
+## 可变参推导指南
+
+在标准库中，`std::array` 定义了如下推导指南：
+```c++
+namespace std {
+  template<typename T, typename... U> array(T, U...)
+    -> array<enable_if_t<(is_same_v<T, U> && ...), T>,
+             (1 + sizeof...(U))>;
+}
+```
+
+[std::enable_if](https://en.cppreference.com/w/cpp/types/enable_if) 定义在头文件<type_traits>
+
+```c++
+template< bool B, class T = void >
+struct enable_if;
+```
+
+如果 B 为真，则 std::enable_if约束类型为T；否则没有类型。
+
+折叠表达式`（is_same_v<T, U> && ...)`展开如下：
+
+```c++
+is_same_v<T, U1> && is_same_v<T, U2> && is_same_v<T, U3> …
+```
+
+```c++
+std::array a{42,45,77};
+//推导如下
+std::array<int, 3> a{42,45,77};
+```
