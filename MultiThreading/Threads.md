@@ -22,7 +22,57 @@ int main()
 
 该代码生成了一个新线程来打印 *hello语句*
 
-`std::thread` 有三个操作函数
+### 线程对象的构造函数
+
+|构造函数| |
+|---------------|----------------|
+|`thread() noexcept;`|默认构造函数|
+|`thread( thread&& other ) noexcept;`|
+|`template< class Function, class... Args > explicit thread( Function&& f, Args&&... args );`|构造函数模板|
+|`thread( const thread& ) = delete;`|禁止拷贝构造函数|
+
+#### 向线程函数传递参数
+
+```c++
+#include <iostream>
+#include <thread>
+#include <vector>
+#include <chrono>
+
+//按值传递
+void f(int num) 
+{
+    std::this_thread::sleep_for(std::chrono::seconds{1});
+    std::cout << num <<" in f" << std::endl;
+
+}
+
+//按引用传递
+void g(int& num)
+{
+    std::this_thread::sleep_for(std::chrono::seconds{1});
+    std::cout << num << " in g" << std::endl;
+}
+
+int main()
+{
+    {
+        int num = 1;
+        std::thread t(f, num);//按拷贝传递
+        std::thread t(f, std::ref(num));//按拷贝传递
+
+        std::thread t(g, num);//错误，局部变量被销毁导致悬空引用
+        std::thread t(g, std::ref(num));//按引用传递
+        t.detach();
+    }
+    std::this_thread::sleep_for(std::chrono::seconds{2});
+}
+```
+
+除非一些特殊用途，否则面对“目标函数所必须”的所有参数都应该以by value方式传递，使得thread只使用local copy。
+请确定绝不要让一个detached thread访问任何寿命已结束的object。基于这个理由，“以by reference方式传递变量和object”给线程，总是带有风险。
+
+### `std::thread` 有三个操作函数
 
 |操作|        |
 |---------------|-----------------|

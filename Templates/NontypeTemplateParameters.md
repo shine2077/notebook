@@ -1,6 +1,7 @@
 # 非类型模板参数
 
 ## 非类型类模板参数
+
 ```c++
 #include <array>
 #include <cassert>
@@ -52,9 +53,11 @@ T const& Stack<T,Maxsize>::top () const
     return elems[numElems-1];  // return last element
 }
 ```
+
 第二个模板参数`Maxsize`是一个整型量。
 
 ## 非类型函数模板参数
+
 ```c++
 template<int Val, typename T>
 T addValue (T x)
@@ -62,9 +65,13 @@ T addValue (T x)
   return x + Val;
 }
 ```
+
 ### 非类型模板参数的限制
+
 一般只能是常整型量，指针类型，左值引用或者`std::nullptr_t`。
+
 - 浮点型和类类型都不被允许。
+
 ```c++
 template<double VAT>         // ERROR: floating-point values are not
 double process (double v)    //        allowed as template parameters
@@ -77,7 +84,9 @@ class MyClass {              //        allowed as template parameters
   …
 };
 ```
+
 - 字符串常量也无法作为模板参数
+  
 ```c++
 template<char const* name>
 class MyClass {
@@ -86,7 +95,9 @@ class MyClass {
  
 MyClass<"hello"> x;  //ERROR: string literal "hello" not allowed
 ```
+
 - [链接性](https://stackoverflow.com/questions/1358400/what-is-external-linkage-and-internal-linkage)限制
+  
 ```c++
 extern char const s03[] = "hi";    // external linkage
 char const s11[] = "hi";           // internal linkage
@@ -103,4 +114,5 @@ int main()
   Message<s21> m21; //ERROR
 }
 ```
+
 最后一条语句报错的原因是`s21`不是 [编译期常量](https://www.learncpp.com/cpp-tutorial/compile-time-constants-constant-expressions-and-constexpr/) 。
