@@ -125,3 +125,137 @@ int main()
     f(std::move(v));  // f() for movable variable calls f(X&&) => calls g(X&&)
 }
 ```
+
+## 特殊成员函数模板
+
+```c++
+#include <utility>
+#include <string>
+#include <iostream>
+
+class Person
+{
+  private:
+    std::string name;
+  public:
+    // constructor for passed initial name:
+    explicit Person(std::string const& n) : name(n) {
+        std::cout << "copying string-CONSTR for ’" << name << "’\n";
+    }
+    explicit Person(std::string&& n) : name(std::move(n)) {
+        std::cout << "moving string-CONSTR for ’" << name << "’\n";
+    }
+    // copy and move constructor:
+    Person (Person const& p) : name(p.name) {
+        std::cout << "COPY-CONSTR Person ’" << name << "’\n";
+    }
+    Person (Person&& p) : name(std::move(p.name)) {
+        std::cout << "MOVE-CONSTR Person ’" << name << "’\n";
+    }
+};
+
+int main()
+{
+  std::string s = "sname";
+  Person p1(s);              // init with string object => calls copying string-CONSTR
+  Person p2("tmp");          // init with string literal => calls moving string-CONSTR
+  Person p3(p1);             // copy Person => calls COPY-CONSTR
+  Person p4(std::move(p1));  // move Person => calls MOVE-CONST
+}
+```
+
+可以通过完美转化使用函数模板实现传参构造函数
+
+```c++
+#include <utility>
+#include <string>
+#include <iostream>
+
+class Person
+{
+  private:
+    std::string name;
+  public:
+    // generic constructor for passed initial name:
+    template<typename STR>
+    explicit Person(STR&& n) : name(std::forward<STR>(n)) {
+        std::cout << "TMPL-CONSTR for ’" << name << "’\n";
+    } 
+
+    // copy and move constructor:
+    Person (Person const& p) : name(p.name) {
+        std::cout << "COPY-CONSTR Person ’" << name << "’\n";
+    }
+    Person (Person&& p) : name(std::move(p.name)) {
+        std::cout << "MOVE-CONSTR Person ’" << name << "’\n";
+    }
+};
+```
+
+```c++
+  std::string s = "sname";
+  Person p1(s);              // init with string object => calls TMPL-CONSTR
+  Person p2("tmp");          // init with string literal => calls TMPL-CONSTR
+  Person p3(p1);             // Error
+  Person p4(std::move(p1));  // move Person => calls MOVE-CONST
+```
+
+`Person p3(p1)` 错误是因为C++的重载解决规则：
+
+函数模板可以用非模板函数进行重载。在其他条件相同的情况下，在选择实际被调用的函数时，非模板函数是首选。
+
+对于非常量左值 `Person p` , 没有首选的非模板函数供调用，因此模板参数`STR`被用来作为 `Person& p` 的替代，而对于复制构造函数来说，需要将其转换为常量，但是调用了上述模板构造函数无法转化。
+
+而常量`Person`是可以的，因为可以优先调用`Person (Person const& p)`:
+
+```c++
+Person const p2c("ctmp"); //init constant object with string literal
+Person p3c(p2c); //OK: copy constant Person => calls COPY-CONSTR
+```
+
+可以通过定义一个非常量拷贝构造函数来解决上述问题,使得可以优先调用这个非模板函数
+
+```c++
+Person (Person& p)
+```
+
+还可以通过`enable_if<>`, 来禁止使用模板
+
+```c++
+#include <utility>
+#include <string>
+#include <iostream>
+#include <type_traits>
+
+template<typename T>
+using EnableIfString = std::enable_if_t<
+                         std::is_convertible_v<T,std::string>>; 
+
+class Person
+{
+  private:
+    std::string name;
+  public:
+    // generic constructor for passed initial name:
+    template<typename STR, typename = EnableIfString<STR>>
+    explicit Person(STR&& n)
+     : name(std::forward<STR>(n)) {
+        std::cout << "TMPL-CONSTR for ’" << name << "’\n";
+    }
+    // copy and move constructor:
+    Person (Person const& p) : name(p.name) {
+        std::cout << "COPY-CONSTR Person ’" << name << "’\n";
+    }
+    Person (Person&& p) : name(std::move(p.name)) {
+        std::cout << "MOVE-CONSTR Person ’" << name << "’\n";
+    }
+};
+```
+
+如果STR 不能转化为string类型，`Person p3(p1)` 会禁止其调用模板函数，编译器会选择执行`Person (Person const& p)`。
+
+```c++
+std::string s = "sname";
+Person p1(s);              // init with string object => calls TMPL-CONSTR
+Person p3(p1);             // OK => calls COPY-CONSTR
+```
